@@ -1,86 +1,58 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <div id="app">
-    <header>
-      <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-      <div class="wrapper">
-        <HelloWorld msg="You did it!" />
-
-        <nav>
-          <router-link to="/">Home</router-link>
-          <router-link to="/about">About</router-link>
-        </nav>
-      </div>
-    </header>
-
-    <router-view />
+    <canvas id="bitRain" ref="bitRain"></canvas>
   </div>
 </template>
 
+<script>
+export default {
+  name: 'App',
+  data() {
+    return {
+      fontSize: 8,
+      columns: 0,
+      yPositions: []
+    }
+  },
+  methods: {
+    drawRain() {
+      // const ctx = document.getElementById('bitRain').getContext('2d');
+      // ctx.fillStyle = 'rgba(0,0,0,0)';
+      // ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      // ctx.font = '700 8px Arial';
+      // ctx.fillStyle = '#00cc33';
+      // for (let i = 0; i < this.columns; i++) {
+      //   let index = Math.floor(Math.random() * 2);
+      //   let x = i * this.fontSize;
+      //   let y = this.yPositions[i] * this.fontSize;
+      //   ctx.fillText('' + index, x, y);
+      //   if (y >= this.$refs.bitRain.height && Math.random() > 0.99) {
+      //     this.yPositions[i] = 0;
+      //   }
+      //   this.yPositions[i]++;
+      // }
+    }
+  },
+  mounted() {
+    this.columns = Math.floor(window.innerWidth / this.fontSize);
+    // for (let i = 0; i < this.columns; i++) {
+    //   this.yPositions.push(0);
+    // }
+    const ctx = document.getElementById('bitRain').getContext('2d');
+    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    ctx.font = '16px 楷体';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('公诚勤廉', 300, 300);
+  }
+}
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+#bitRain {
+  margin: 0 8px;
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+  height: 100%;
 }
 </style>
