@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <MusicPlayer/>
     <!-- 上浮宣传标语 -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="110" style="position: absolute; top: 580px; left: 1%" id="text1">
       <text x="0"
@@ -93,8 +94,10 @@
 </template>
 
 <script>
+import MusicPlayer from '@/components/MusicPlayer.vue';
 export default {
   name: 'App',
+  components: {MusicPlayer},
   data() {
     return {
     }
