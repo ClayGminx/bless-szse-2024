@@ -1,6 +1,94 @@
 <template>
   <div id="app">
-    <canvas id="bitRain" ref="bitRain"></canvas>
+    <!-- 上浮宣传标语 -->
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="110" style="position: absolute; top: 580px; left: 1%">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">公诚勤廉</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="260" style="position: absolute; top: 350px; left: 50px;">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">全面实现深交所数字化</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="260" style="position: absolute; top: 400px; left: 100px;">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">快速灵活协同业务创新</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="260" style="position: absolute; top: 300px; left: 150px;">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">持续有力保障安全运营</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="260" style="position: absolute; top: 410px; left: 200px;">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">提高深交所核心竞争力</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="370" style="position: absolute; top: 260px; right: 255px">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">建设国际一流的数字化基础设施</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="320" style="position: absolute; top: 200px; right: 205px">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">打造世界领先的数字化平台</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="320" style="position: absolute; top: 350px; right: 155px">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">构建卓越精益的数字化能力</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="320" style="position: absolute; top: 300px; right: 105px">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">构筑开放协作的数字化生态</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="160" style="position: absolute; top: 500px; right: 55px">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">汇聚创新资本</text>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="160" style="position: absolute; top: 500px; right: 25px">
+      <text x="0"
+            y="25"
+            fill="#F5DF9D"
+            transform="rotate(90,0,25)"
+            rotate="-90"
+            style="font: 25px 楷体,楷体-简; letter-spacing:1px">激发成长动力</text>
+    </svg>
   </div>
 </template>
 
@@ -9,50 +97,17 @@ export default {
   name: 'App',
   data() {
     return {
-      fontSize: 8,
-      columns: 0,
-      yPositions: []
     }
   },
   methods: {
-    drawRain() {
-      // const ctx = document.getElementById('bitRain').getContext('2d');
-      // ctx.fillStyle = 'rgba(0,0,0,0)';
-      // ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-      // ctx.font = '700 8px Arial';
-      // ctx.fillStyle = '#00cc33';
-      // for (let i = 0; i < this.columns; i++) {
-      //   let index = Math.floor(Math.random() * 2);
-      //   let x = i * this.fontSize;
-      //   let y = this.yPositions[i] * this.fontSize;
-      //   ctx.fillText('' + index, x, y);
-      //   if (y >= this.$refs.bitRain.height && Math.random() > 0.99) {
-      //     this.yPositions[i] = 0;
-      //   }
-      //   this.yPositions[i]++;
-      // }
-    }
   },
   mounted() {
-    this.columns = Math.floor(window.innerWidth / this.fontSize);
-    // for (let i = 0; i < this.columns; i++) {
-    //   this.yPositions.push(0);
-    // }
-    const ctx = document.getElementById('bitRain').getContext('2d');
-    ctx.fillStyle = 'rgba(0,0,0,0)';
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    ctx.font = '16px 楷体';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('公诚勤廉', 300, 300);
   }
 }
 </script>
 
 <style scoped>
-#bitRain {
-  margin: 0 8px;
-  width: 100%;
-  height: 100%;
+#id {
+  height: 700px;
 }
 </style>
