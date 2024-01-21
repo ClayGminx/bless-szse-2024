@@ -1,6 +1,11 @@
 <template>
   <div id="app">
+    <!-- 思维导图 -->
+    <MindMapping/>
+    
+    <!-- 音乐播放器 -->
     <MusicPlayer/>
+
     <!-- 上浮宣传标语 -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="110" style="position: absolute; top: 580px; left: 1%" id="text1">
       <text x="0"
@@ -95,9 +100,11 @@
 
 <script>
 import MusicPlayer from '@/components/MusicPlayer.vue';
+import MindMapping from '@/components/MindMapping.vue';
+
 export default {
   name: 'App',
-  components: {MusicPlayer},
+  components: {MusicPlayer, MindMapping},
   data() {
     return {
     }

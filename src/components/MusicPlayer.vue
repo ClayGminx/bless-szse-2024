@@ -100,6 +100,15 @@ export default {
       this.current = (this.current - 1 + this.playlist.length) % this.playlist.length;
       this.playCurrent();
     }
+  },
+  mounted() {
+    // 加载播放器时就自动给播放音乐
+    const that = this;
+    const setAutoPlay = function() {
+      that.playCurrent();
+      document.removeEventListener('click', setAutoPlay);
+    }
+    document.addEventListener('click', setAutoPlay);
   }
 }
 </script>
