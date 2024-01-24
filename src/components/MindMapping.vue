@@ -1,12 +1,16 @@
 <template>
-    <div id="MindMapping" :style="mindMappingStyle">
-        <img id="MindMappingImg"
-             src="/深交所宣传标语思维导图.v2.png"
-             alt="深交所宣传标语思维导图"
-             draggable="true"
-             :width="imgWidth"
-             :style="imgStyle"/>
-    </div>
+    <img id="mindMappingImg"
+         ref="mindMappingImg"
+         src="/深交所宣传标语思维导图.v2.png"
+         alt="深交所宣传标语思维导图"
+         draggable="false"
+         @mousedown="startDrag"
+         @mousemove="onDragging"
+         @mouseup="endDrag"
+         @mousewheel="zoomInOut"
+         :width="imgWidth"
+         :style="imgStyle"
+         :class="{ flutter: dragging }"/>
 </template>
 
 <script>
@@ -14,77 +18,90 @@ export default {
     name: 'MindMapping',
     data() {
         return {
-            mindMappingStyle: {
-                display: 'inline-block',
+            imgStyle: {
                 position: 'absolute',
-                border: '1px solid #fff',
-                width: '775px',
-                height: '400px',
                 top: '50%',
                 left: '50%',
-                transform: 'translate(-50%, -50%)',
-                overflow: 'hidden'
+                transform: 'translate(-50%,-50%)'
             },
-            imgStyle: {
-                position: 'relative',
-                top: '0px',
-                left: '0px',
-                opacity: 1
+            flutter: {
+                zIndex: 9999,
+                pointerEvents: 'none'
             },
-            imgWidth: '100%',
-            pos: {
-                x: 0,
-                y: 0,
-                offsetX: 0,
-                offsetY: 0
+            initial: {
+                offsetLeft: 0,
+                offsetTop: 0,
+                pageX: 0,
+                pageY: 0
+            },
+            imgWidth: '50%',
+            scale: 0.523,
+            clonedImg: null,
+            dragging: false
+        }
+    },
+    methods: {
+        startDrag(e) {
+            this.dragging = true;
+            this.initial.offsetLeft = e.target.offsetLeft;
+            this.initial.offsetTop = e.target.offsetTop;
+            this.initial.pageX = e.pageX;
+            this.initial.pageY = e.pageY;
+        },
+        onDragging(e) {
+            if (this.dragging) {
+                let left = this.initial.offsetLeft + e.pageX - this.initial.pageX,
+                    top = this.initial.offsetTop + e.pageY - this.initial.pageY;
+                this.imgStyle.left = `${left}px`;
+                this.imgStyle.top = `${top}px`;
             }
+        },
+        endDrag() {
+            this.dragging = false;
+        },
+        zoomInOut(e) {
+            let width = parseInt(this.imgWidth),
+                delta = parseInt(width * 0.05),
+                left = parseInt(this.imgStyle.left),
+                top = parseInt(this.imgStyle.top);
+            if (e.wheelDelta > 0) {// 放大
+                width += delta;
+                this.imgStyle.left = `${left - delta / 2}px`;
+                this.imgStyle.top = `${top - parseInt(delta * this.scale  /2)}px`;
+            } else {// 缩小
+                const minWidth = 194;
+                width -= delta;
+                if (width < minWidth) {
+                    return;
+                }
+                this.imgStyle.left = `${left + delta / 2}px`;
+                this.imgStyle.top = `${top + parseInt(delta * this.scale  /2)}px`;
+            }
+            this.imgWidth = `${width}px`;
         }
     },
     mounted() {
-        const mindMapping = document.getElementById('MindMapping');
-        const mindMappingImg = document.getElementById('MindMappingImg');
-
-        mindMapping.addEventListener('mousewheel', event => {
-            let width = parseInt(this.imgWidth);
-            if (event.wheelDelta > 0) {
-                // 放大图片
-                width += 5;
-            } else {
-                // 缩小图片
-                if (width > 0) {
-                    width -= 5;
-                }
-                if (width < 0) {
-                    width = 0;
-                }
-            }
-            this.imgWidth = width + '%';
-        });
-
-        mindMappingImg.addEventListener('dragstart', event => {
-            this.pos.x = event.pageX;
-            this.pos.y = event.pageY;
-            this.imgStyle.opacity = 0.5;
-            console.log(`dragstart ${this.pos.x},${this.pos.y}`);
-        });
-        mindMappingImg.addEventListener('drag', event => {
-            let offsetX = event.pageX - this.pos.x,
-                offsetY = event.pageY - this.pos.y;
-            console.log(`drag ${offsetX},${offsetY}`);
-            console.log(`drag ${this.imgStyle.left},${this.imgStyle.top}`);
-            this.imgStyle.left = parseInt(this.imgStyle.left) + offsetX + 'px';
-            this.imgStyle.top = parseInt(this.imgStyle.top) + offsetY + 'px';
-        });
-        mindMappingImg.addEventListener('dragend', event => {
-            // let offsetX = event.pageX - this.pos.x,
-            //     offsetY = event.pageY - this.pos.y;
-            // this.imgStyle.left = parseInt(this.imgStyle.left) + offsetX + 'px';
-            // this.imgStyle.top = parseInt(this.imgStyle.top) + offsetY + 'px';
-            this.imgStyle.opacity = 1;
-        });
+        const img = this.$refs.mindMappingImg;
+        let left = img.offsetLeft - img.offsetWidth / 2,
+            top = parseInt(img.offsetTop - img.offsetWidth * this.scale / 2);
+        this.imgStyle = {
+            position: 'absolute',
+            left: `${left}px`,
+            top: `${top}px`
+        };
+        this.imgWidth = `${img.offsetWidth}px`;
     }
 }
 </script>
 
 <style scoped>
+#mindMappingImg:hover {
+    /* 开始抓取的动作 */
+    cursor: grab;
+}
+
+#mindMappingImg:active {
+    /* 正在抓取的动作 */
+    cursor: grabbing;
+}
 </style>

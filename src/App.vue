@@ -104,15 +104,7 @@ import MindMapping from '@/components/MindMapping.vue';
 
 export default {
   name: 'App',
-  components: {MusicPlayer, MindMapping},
-  data() {
-    return {
-    }
-  },
-  methods: {
-  },
-  mounted() {
-  }
+  components: {MusicPlayer, MindMapping}
 }
 </script>
 

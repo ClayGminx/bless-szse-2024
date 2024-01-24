@@ -1,5 +1,5 @@
 <template>
-  <div id="MusicPlayer">
+  <div id="musicPlayer">
     <div class="music-info">
       <div class="music-title">{{ playlist[current].title }}</div>
       <div class="music-artist">{{  playlist[current].artist }}</div>
@@ -108,20 +108,20 @@ export default {
       that.playCurrent();
       document.removeEventListener('click', setAutoPlay);
     }
-    document.addEventListener('click', setAutoPlay);
+    // document.addEventListener('click', setAutoPlay);
   }
 }
 </script>
 
 <style scoped>
-#MusicPlayer {
+#musicPlayer {
   display: inline-block;
   position: fixed;
   left: 0;
   bottom: 1em;
 }
 
-#MusicPlayer > .music-info {
+#musicPlayer > .music-info {
   display: inline-block;
   width: 6em;
   color: white;
@@ -139,7 +139,7 @@ export default {
   font-size: smaller;
 }
 
-#MusicPlayer > .music-actions {
+#musicPlayer > .music-actions {
   display: inline-block;
   height: 30px;
 }
