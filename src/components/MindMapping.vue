@@ -14,10 +14,42 @@
 </template>
 
 <script>
+/*
+   图片位置：
+   水平居中、垂直居中
+
+   展示最大宽度：
+   window.innerWidth * 0.63
+
+   展示最大高度：
+   window.innerHeight * 0.7
+
+   演示：
+   if 演示部分的宽度 <= 展示最大宽度
+     演示宽度 = 演示部分的宽度
+   else
+     演示宽度 = 展示最大宽度
+   
+   演示缩放比 = 演示宽度 / 演示部分的宽度
+   演示高度 = 演示部分的高度 * 演示缩放比
+   if 演示高度 > 展示最大高度
+     演示宽度 = 演示宽度 * 展示最大高度 / 演示高度
+     演示缩放比 = 演示宽度 / 演示部分的宽度
+
+   background-size = 图片原始宽度 / 演示部分的宽度
+   演示高度 = 演示部分的高度 * 演示缩放比
+   background-position-x = 0 - 演示部分的横坐标 * 演示缩放比
+   background-position-y = 0 - 演示部分的纵坐标 * 演示缩放比
+ */
 export default {
     name: 'MindMapping',
     data() {
         return {
+            // 图片的原始尺寸
+            imgSize: {
+                w: 4195,
+                h: 2037
+            },
             imgStyle: {
                 position: 'absolute',
                 top: '50%',
@@ -34,10 +66,79 @@ export default {
                 pageX: 0,
                 pageY: 0
             },
-            imgWidth: '50%',
+            imgWidth: '63%',
             scale: 0.523,
             clonedImg: null,
-            dragging: false
+            dragging: false,
+            playPath: [{// 中心主题
+                x: 1870,
+                y: 850,
+                w: 837,
+                h: 258
+            }, {// 价值观
+                x: 2640,
+                y: 0,
+                w: 800,
+                h: 230
+            }, {// 使命
+                x: 2640,
+                y: 178,
+                w: 800,
+                h: 280
+            }, {// 愿景
+                x: 2640,
+                y: 395,
+                w: 395,
+                h: 270
+            }, {// 总体原则
+                x: 2640,
+                y: 623,
+                w: 1440,
+                h: 555
+            }, {// 主要目标
+                x: 2640,
+                y: 1164,
+                w: 1440,
+                h: 492
+            }, {// 主要目标
+                x: 2640,
+                y: 1662,
+                w: 1558,
+                h: 375
+            }, {// 战略目标
+                x: 0,
+                y: 0,
+                w: 1990,
+                h: 2037
+            }, {// 使命&愿景
+                x: 326,
+                y: 140,
+                w: 978,
+                h: 586
+            }, {// 原则策略
+                x: 244,
+                y: 718,
+                w: 982,
+                h: 660
+            }, {// 战略目标
+                x: 42,
+                y: 1364,
+                w: 1188,
+                h: 256
+            }, {// 重点任务
+                x: 432,
+                y: 1600,
+                w: 794,
+                h: 390
+            }]
+        }
+    },
+    computed: {
+        getMaxDisplayWidth() {
+            return Math.floor(window.innerWidth * 0.63);
+        },
+        getMaxDisplayHeight() {
+            return Math.floor(window.innerHeight * 0.7);
         }
     },
     methods: {
@@ -78,6 +179,33 @@ export default {
                 this.imgStyle.top = `${top + parseInt(delta * this.scale  /2)}px`;
             }
             this.imgWidth = `${width}px`;
+        },
+        getDisplayProp(x, y, w, h) {
+            let displayWidth, displayHeight, displayX, displayY, scale;
+            if (w > this.getMaxDisplayWidth) {
+                displayWidth = this.getMaxDisplayWidth;
+            } else {
+                displayWidth = w;
+            }
+            scale = Math.round(displayWidth / w * 10000) / 10000;
+            displayHeight = Math.floor(h * scale);
+            if (displayHeight > this.getMaxDisplayHeight) {
+                displayWidth = parseInt(displayWidth * this.getMaxDisplayHeight / displayHeight);
+                scale = Math.round(displayWidth / w * 10000) / 10000;
+            }
+            displayHeight = Math.floor(h * scale);
+            displayX = 0 - Math.floor(x * scale);
+            displayY = 0 - Math.floor(y * scale);
+            return {
+                x: displayX,
+                y: displayY,
+                w: displayWidth,
+                h: displayHeight
+            };
+        },
+        getBackgroundSize(w) {
+            let scale = Math.floor(this.imgSize / w * 100);
+            return `${scale}%`;
         }
     },
     mounted() {

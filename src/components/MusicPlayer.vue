@@ -102,13 +102,12 @@ export default {
     }
   },
   mounted() {
-    // 加载播放器时就自动给播放音乐
     const that = this;
-    const setAutoPlay = function() {
-      that.playCurrent();
-      document.removeEventListener('click', setAutoPlay);
-    }
-    // document.addEventListener('click', setAutoPlay);
+    this.$bus.$on('playMusic', () => {
+      if (!that.playing) {
+        that.playCurrent();
+      }
+    });
   }
 }
 </script>

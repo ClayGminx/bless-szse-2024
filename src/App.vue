@@ -1,13 +1,12 @@
 <template>
-  <div id="app">
+  <div id="app" ref="app">
     <!-- 思维导图 -->
-    <MindMapping/>
-    
+    <transition name="zoom-in">
+      <MindMapping v-if="showMindMapping"/>
+    </transition>
+
     <!-- 音乐播放器 -->
     <MusicPlayer/>
-
-    <!-- 烟花 -->
-    <SpringFirework/>
 
     <!-- 上浮宣传标语 -->
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="25" height="110" style="position: absolute; top: 580px; left: 1%" id="text1">
@@ -108,7 +107,58 @@ import SpringFirework from '@/components/SpringFirework.vue';
 
 export default {
   name: 'App',
-  components: {MusicPlayer, MindMapping, SpringFirework}
+  components: {MusicPlayer, MindMapping, SpringFirework},
+  data() {
+    return {
+      nextAction: 0,
+      showMindMapping: false
+    }
+  },
+  methods: {
+    playMusic() {
+      console.debug('play music');
+      this.$bus.$emit('playMusic');
+    },
+    startMindMapping() {
+      console.debug('start mind mapping');
+      this.showMindMapping = true;
+    },
+    leaveMindMapping() {
+      console.debug('leave mind mapping');
+      this.showMindMapping = false;
+    },
+    playVideo() {
+      console.debug('play a video');
+    },
+    playFirework() {
+      console.debug('play firework');
+    }
+  },
+  mounted() {
+    const that = this;
+    window.addEventListener('keyup', event => {
+      if ('ArrowDown' === event.key || 'ArrowRight' === event.key) {
+        switch (that.nextAction) {
+          case 0:
+            that.playMusic();
+            break;
+          case 1:
+            that.startMindMapping();
+            break;
+          case 2:
+            that.leaveMindMapping();
+            break;
+          case 3:
+            that.playVideo();
+            break;
+          case 4:
+            that.playFirework();
+            break;
+        }
+        that.nextAction++;
+      }
+    });
+  }
 }
 </script>
 
@@ -270,5 +320,23 @@ export default {
 
 #text11 {
   animation: floatText11 66s linear 1s infinite;
+}
+
+@keyframes zoom-in {
+  0% {
+    opacity: 0;
+    transform: scale3d(.3, .3, .3);
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.zoom-in-enter-active {
+  animation: zoom-in 3s;
+}
+
+.zoom-in-leave-active {
+  animation: zoom-in 3s reverse;
 }
 </style>
