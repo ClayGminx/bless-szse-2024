@@ -137,7 +137,7 @@ export default {
   mounted() {
     const that = this;
     window.addEventListener('keyup', event => {
-      if ('ArrowDown' === event.key || 'ArrowRight' === event.key) {
+      if ('ArrowDown' === event.key) {
         switch (that.nextAction) {
           case 0:
             that.playMusic();
@@ -156,6 +156,9 @@ export default {
             break;
         }
         that.nextAction++;
+      }
+      if ('ArrowRight' === event.key) {
+        this.$bus.$emit('showNext');
       }
     });
   }

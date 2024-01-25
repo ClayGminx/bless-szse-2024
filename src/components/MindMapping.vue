@@ -84,7 +84,7 @@ export default {
       }, {// 愿景
         x: 2640,
         y: 395,
-        w: 395,
+        w: 1000,
         h: 270
       }, {// 总体原则
         x: 2640,
@@ -126,14 +126,15 @@ export default {
         y: 1600,
         w: 794,
         h: 390
-      }]
+      }],
+      nextPath: 0
     };
   },
   computed: {
-    getMaxDisplayWidth() {
+    getMaxShowWidth() {
       return window.innerWidth - 605;
     },
-    getMaxDisplayHeight() {
+    getMaxShowHeight() {
       return Math.floor(window.innerHeight * 0.7);
     }
   },
@@ -179,18 +180,20 @@ export default {
           let height = Math.ceil(width * scale);
           this.imgContainerStyle.height = `${height}px`;
       },
-      getDisplayProp(x, y, w, h) {
+      getShowProp(x, y, w, h) {
           let displayWidth, displayHeight, displayX, displayY, scale;
-          if (w > this.getMaxDisplayWidth) {
-              displayWidth = this.getMaxDisplayWidth;
+          if (w > this.getMaxShowWidth) {
+              displayWidth = this.getMaxShowWidth;
           } else {
               displayWidth = w;
           }
+          console.debug(displayWidth)
           scale = Math.round(displayWidth / w * 10000) / 10000;
           displayHeight = Math.floor(h * scale);
-          if (displayHeight > this.getMaxDisplayHeight) {
-              displayWidth = parseInt(displayWidth * this.getMaxDisplayHeight / displayHeight);
+          if (displayHeight > this.getMaxShowHeight) {
+              displayWidth = parseInt(displayWidth * this.getMaxShowHeight / displayHeight);
               scale = Math.round(displayWidth / w * 10000) / 10000;
+              console.debug(displayWidth, scale);
           }
           displayHeight = Math.floor(h * scale);
           displayX = 0 - Math.floor(x * scale);
@@ -203,13 +206,34 @@ export default {
           };
       },
       getBackgroundSize(w) {
-          let scale = Math.floor(this.imgSize / w * 100);
+          let scale = Math.floor(this.imgSize.w / w * 100);
           return `${scale}%`;
+      },
+      showNext() {
+        if (this.nextPath >= this.showPath.length) {
+          return;
+        }
+
+        this.$nextTick(() => {
+          const next = this.showPath[this.nextPath];
+          const showProp = this.getShowProp(next.x, next.y, next.w, next.h);
+          console.log(showProp);
+          this.imgContainerStyle.width = `${showProp.w}px`;
+          this.imgContainerStyle.height = `${showProp.h}px`;
+          this.imgContainerStyle.backgroundPosition = `${showProp.x}px ${showProp.y}px`;
+          this.imgContainerStyle.backgroundSize = this.getBackgroundSize(showProp.w);
+          this.imgContainerStyle.left = '50%';
+          this.imgContainerStyle.top = '50%';
+          this.imgContainerStyle.transform = 'translate(-50%, -50%)';
+          console.debug(this.imgContainerStyle);
+        });
+
+        this.nextPath++;
       }
   },
   mounted() {
-    let h = Math.ceil(this.getMaxDisplayWidth * (this.imgSize.h / this.imgSize.w));
-    this.imgContainerStyle.width = `${this.getMaxDisplayWidth}px`;
+    let h = Math.ceil(this.getMaxShowWidth * (this.imgSize.h / this.imgSize.w));
+    this.imgContainerStyle.width = `${this.getMaxShowWidth}px`;
     this.imgContainerStyle.height = `${h}px`;
 
     this.$nextTick(() => {
@@ -221,6 +245,8 @@ export default {
       this.imgContainerStyle.top = `${top}px`;
       this.imgContainerStyle.transform = undefined;
     });
+
+    this.$bus.$on('showNext', this.showNext);
   }
 }
 </script>
