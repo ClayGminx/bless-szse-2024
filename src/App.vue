@@ -1,7 +1,9 @@
 <template>
   <div id="app" ref="app">
     <!-- 思维导图 -->
-    <transition name="zoom-in">
+    <transition
+      enter-active-class="animate__animated animate__backInDown"
+      leave-active-class="animate__animated animate__backOutDown animate__slower">
       <MindMapping v-if="showMindMapping"/>
     </transition>
 
@@ -324,23 +326,5 @@ export default {
 
 #text11 {
   animation: floatText11 66s linear 1s infinite;
-}
-
-@keyframes zoom-in {
-  0% {
-    opacity: 0;
-    transform: scale3d(.3, .3, .3);
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.zoom-in-enter-active {
-  animation: zoom-in 3s;
-}
-
-.zoom-in-leave-active {
-  animation: zoom-in 3s reverse;
 }
 </style>
