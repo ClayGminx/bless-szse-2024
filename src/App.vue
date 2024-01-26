@@ -156,9 +156,10 @@ export default {
             break;
         }
         that.nextAction++;
-      }
-      if ('ArrowRight' === event.key) {
+      } else if ('ArrowRight' === event.key) {
         this.$bus.$emit('showNext');
+      } else if ('ArrowLeft' === event.key) {
+        this.$bus.$emit('showPrevious');
       }
     });
   }

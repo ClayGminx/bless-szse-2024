@@ -86,48 +86,49 @@ export default {
         y: 395,
         w: 1000,
         h: 270
-      }, {// 总体原则
+      }, {// 深交所“十四五”发展战略规划与“优一”建设纲要的总体原则
         x: 2640,
         y: 623,
         w: 1440,
         h: 555
-      }, {// 主要目标
+      }, {// 深交所“十四五”发展战略规划的主要目标
         x: 2640,
         y: 1164,
         w: 1440,
         h: 492
-      }, {// 主要目标
+      }, {// “优一”建设纲要的主要目标
         x: 2640,
         y: 1662,
         w: 1558,
         h: 375
-      }, {// 战略目标
+      }, {// 十四五IT发展战略目标
         x: 0,
         y: 0,
-        w: 1990,
+        w: 1890,
         h: 2037
-      }, {// 使命&愿景
+      }, {// 战略目标之使命&愿景
         x: 326,
         y: 140,
         w: 978,
         h: 586
-      }, {// 原则策略
+      }, {// 战略目标之原则策略
         x: 244,
         y: 718,
         w: 982,
         h: 660
-      }, {// 战略目标
+      }, {// 战略目标之战略目标
         x: 42,
         y: 1364,
         w: 1188,
         h: 256
-      }, {// 重点任务
+      }, {// 战略目标之重点任务
         x: 432,
         y: 1600,
         w: 794,
         h: 390
       }],
-      nextPath: 0
+      nextPath: -1,
+      showing: false
     };
   },
   computed: {
@@ -139,97 +140,108 @@ export default {
     }
   },
   methods: {
-      startDrag(e) {
-          this.dragging = true;
-          this.initialPos.offsetLeft = e.target.offsetLeft;
-          this.initialPos.offsetTop = e.target.offsetTop;
-          this.initialPos.pageX = e.pageX;
-          this.initialPos.pageY = e.pageY;
-      },
-      onDragging(e) {
-          if (this.dragging) {
-              let left = this.initialPos.offsetLeft + e.pageX - this.initialPos.pageX,
-                  top = this.initialPos.offsetTop + e.pageY - this.initialPos.pageY;
-              this.imgContainerStyle.left = `${left}px`;
-              this.imgContainerStyle.top = `${top}px`;
-          }
-      },
-      endDrag() {
-          this.dragging = false;
-      },
-      zoomInOut(e) {
-          let width = parseInt(this.$refs.imgContainer.offsetWidth),
-              delta = parseInt(width * 0.05),
-              left = parseInt(this.imgContainerStyle.left),
-              top = parseInt(this.imgContainerStyle.top),
-              scale = this.imgSize.h / this.imgSize.w;
-          if (e.wheelDelta > 0) {// 放大
-              width += delta;
-              this.imgContainerStyle.left = `${left - delta / 2}px`;
-              this.imgContainerStyle.top = `${top - parseInt(delta * scale / 2)}px`;
-          } else {// 缩小
-              const minWidth = 194;
-              width -= delta;
-              if (width < minWidth) {
-                  return;
-              }
-              this.imgContainerStyle.left = `${left + delta / 2}px`;
-              this.imgContainerStyle.top = `${top + parseInt(delta * scale / 2)}px`;
-          }
-          this.imgContainerStyle.width = `${width}px`;
-          let height = Math.ceil(width * scale);
-          this.imgContainerStyle.height = `${height}px`;
-      },
-      getShowProp(x, y, w, h) {
-          let displayWidth, displayHeight, displayX, displayY, scale;
-          if (w > this.getMaxShowWidth) {
-              displayWidth = this.getMaxShowWidth;
-          } else {
-              displayWidth = w;
-          }
-          console.debug(displayWidth)
-          scale = Math.round(displayWidth / w * 10000) / 10000;
-          displayHeight = Math.floor(h * scale);
-          if (displayHeight > this.getMaxShowHeight) {
-              displayWidth = parseInt(displayWidth * this.getMaxShowHeight / displayHeight);
-              scale = Math.round(displayWidth / w * 10000) / 10000;
-              console.debug(displayWidth, scale);
-          }
-          displayHeight = Math.floor(h * scale);
-          displayX = 0 - Math.floor(x * scale);
-          displayY = 0 - Math.floor(y * scale);
-          return {
-              x: displayX,
-              y: displayY,
-              w: displayWidth,
-              h: displayHeight
-          };
-      },
-      getBackgroundSize(w) {
-          let scale = Math.floor(this.imgSize.w / w * 100);
-          return `${scale}%`;
-      },
-      showNext() {
-        if (this.nextPath >= this.showPath.length) {
+    startDrag(e) {
+      this.dragging = true;
+      this.initialPos.offsetLeft = e.target.offsetLeft;
+      this.initialPos.offsetTop = e.target.offsetTop;
+      this.initialPos.pageX = e.pageX;
+      this.initialPos.pageY = e.pageY;
+    },
+    onDragging(e) {
+      if (this.dragging) {
+        let left = this.initialPos.offsetLeft + e.pageX - this.initialPos.pageX,
+            top = this.initialPos.offsetTop + e.pageY - this.initialPos.pageY;
+        this.imgContainerStyle.left = `${left}px`;
+        this.imgContainerStyle.top = `${top}px`;
+      }
+    },
+    endDrag() {
+      this.dragging = false;
+    },
+    zoomInOut(e) {
+      if (this.showing) {
+        return;
+      }
+      let width = parseInt(this.$refs.imgContainer.offsetWidth),
+          delta = parseInt(width * 0.05),
+          left = parseInt(this.imgContainerStyle.left),
+          top = parseInt(this.imgContainerStyle.top),
+          scale = this.imgSize.h / this.imgSize.w;
+      if (e.wheelDelta > 0) {// 放大
+        width += delta;
+        this.imgContainerStyle.left = `${left - delta / 2}px`;
+        this.imgContainerStyle.top = `${top - parseInt(delta * scale / 2)}px`;
+      } else {// 缩小
+        const minWidth = 194;
+        width -= delta;
+        if (width < minWidth) {
           return;
         }
-
-        this.$nextTick(() => {
-          const next = this.showPath[this.nextPath];
-          const showProp = this.getShowProp(next.x, next.y, next.w, next.h);
-          console.log(showProp);
-          this.imgContainerStyle.width = `${showProp.w}px`;
-          this.imgContainerStyle.height = `${showProp.h}px`;
-          this.imgContainerStyle.backgroundPosition = `${showProp.x}px ${showProp.y}px`;
-          this.imgContainerStyle.backgroundSize = this.getBackgroundSize(showProp.w);
-          this.imgContainerStyle.left = '50%';
-          this.imgContainerStyle.top = '50%';
-          this.imgContainerStyle.transform = 'translate(-50%, -50%)';
-          console.debug(this.imgContainerStyle);
-        });
-
-        this.nextPath++;
+        this.imgContainerStyle.left = `${left + delta / 2}px`;
+        this.imgContainerStyle.top = `${top + parseInt(delta * scale / 2)}px`;
       }
+      this.imgContainerStyle.width = `${width}px`;
+      let height = Math.ceil(width * scale);
+      this.imgContainerStyle.height = `${height}px`;
+    },
+    getShowProp(x, y, w, h) {
+        let displayWidth, displayHeight, displayX, displayY, scale;
+        if (w > this.getMaxShowWidth) {
+            displayWidth = this.getMaxShowWidth;
+        } else {
+            displayWidth = w;
+        }
+        scale = Math.round(displayWidth / w * 10000) / 10000;
+        displayHeight = Math.floor(h * scale);
+        if (displayHeight > this.getMaxShowHeight) {
+            displayWidth = parseInt(displayWidth * this.getMaxShowHeight / displayHeight);
+            scale = Math.round(displayWidth / w * 10000) / 10000;
+        }
+        displayHeight = Math.floor(h * scale);
+        displayX = 0 - Math.floor(x * scale);
+        displayY = 0 - Math.floor(y * scale);
+        return {
+            x: displayX,
+            y: displayY,
+            w: displayWidth,
+            h: displayHeight
+        };
+    },
+    getBackgroundSize(w) {
+        let scale = Math.floor(this.imgSize.w / w * 100);
+        return `${scale}%`;
+    },
+    showNext() {
+      if (++this.nextPath === this.showPath.length) {
+        this.nextPath--;
+        return;
+      }
+      this.internalShow();
+    },
+    showPrevious() {
+      if (--this.nextPath < 0) {
+        this.nextPath++;
+        return;
+      }
+      this.internalShow();
+    },
+    internalShow() {
+      this.$nextTick(() => {
+        const next = this.showPath[this.nextPath];
+        console.debug(`show ${this.nextPath}: ${JSON.stringify(next)}`);
+
+        const showProp = this.getShowProp(next.x, next.y, next.w, next.h);
+        console.debug(`show property: ${JSON.stringify(showProp)}`);
+
+        this.imgContainerStyle.width = `${showProp.w}px`;
+        this.imgContainerStyle.height = `${showProp.h}px`;
+        this.imgContainerStyle.backgroundPosition = `${showProp.x}px ${showProp.y}px`;
+        this.imgContainerStyle.backgroundSize = this.getBackgroundSize(next.w);
+        this.imgContainerStyle.left = '50%';
+        this.imgContainerStyle.top = '50%';
+        this.imgContainerStyle.transform = 'translate(-50%, -50%)';
+      });
+    }
   },
   mounted() {
     let h = Math.ceil(this.getMaxShowWidth * (this.imgSize.h / this.imgSize.w));
@@ -247,6 +259,7 @@ export default {
     });
 
     this.$bus.$on('showNext', this.showNext);
+    this.$bus.$on('showPrevious', this.showPrevious);
   }
 }
 </script>
