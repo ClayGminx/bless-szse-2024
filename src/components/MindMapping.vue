@@ -307,16 +307,6 @@ export default {
       this.imgContainerStyle.height = `${h}px`;
       this.active = true;
       console.debug(`mind mapping: width=${this.imgContainerStyle.width}, height=${h}`);
-
-      // 当思维导图渲染成功后，就可以在`$nextTick()`内获取以像素为单元的位置和尺寸了
-      this.$nextTick(() => {
-        let target = this.$refs.imgContainer,// 这样做有助于提升性能
-            left = target.offsetLeft - Math.floor(target.offsetWidth / 2),// 本来值是`50%`的，现在变成了像素值
-            top = Math.floor(target.offsetTop - target.offsetWidth * (this.imgSize.h / this.imgSize.w) / 2);
-        console.debug(`left=${left}, top=${top}`);
-        this.imgContainerStyle.left = `${left}px`;
-        this.imgContainerStyle.top = `${top}px`;
-      });
     },
     leaveMindMapping() {// 思维导图离场
       // 注意，此处队离场类样式的代码，应当放在`$nextTick()`之前
@@ -327,6 +317,7 @@ export default {
     }
   },
   mounted() {
+    // 监听键盘指令
     this.$bus.$on('startMindMapping', this.startMindMapping);
     this.$bus.$on('leaveMindMapping', this.leaveMindMapping);
     this.$bus.$on('showNext', this.showNext);
