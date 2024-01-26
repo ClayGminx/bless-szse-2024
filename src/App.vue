@@ -1,11 +1,7 @@
 <template>
   <div id="app" ref="app">
     <!-- 思维导图 -->
-    <transition
-      enter-active-class="animate__animated animate__backInDown"
-      leave-active-class="animate__animated animate__backOutDown animate__slower">
-      <MindMapping v-if="showMindMapping"/>
-    </transition>
+    <MindMapping/>
 
     <!-- 音乐播放器 -->
     <MusicPlayer/>
@@ -112,8 +108,7 @@ export default {
   components: {MusicPlayer, MindMapping, SpringFirework},
   data() {
     return {
-      nextAction: 0,
-      showMindMapping: false
+      nextAction: 0
     }
   },
   methods: {
@@ -123,14 +118,11 @@ export default {
     },
     startMindMapping() {
       console.debug('start mind mapping');
-      this.showMindMapping = true;
+      this.$bus.$emit('startMindMapping');
     },
     leaveMindMapping() {
       console.debug('leave mind mapping');
-      this.showMindMapping = false;
-    },
-    playVideo() {
-      console.debug('play a video');
+      this.$bus.$emit('leaveMindMapping');
     },
     playFirework() {
       console.debug('play firework');
@@ -151,9 +143,6 @@ export default {
             that.leaveMindMapping();
             break;
           case 3:
-            that.playVideo();
-            break;
-          case 4:
             that.playFirework();
             break;
         }

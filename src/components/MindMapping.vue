@@ -1,13 +1,20 @@
 <template>
-  <div id="imgContainer"
-       ref="imgContainer"
-       draggable="false"
-       @mousedown="startDrag"
-       @mousemove="onDragging"
-       @mouseup="endDrag"
-       @mousewheel="zoomInOut"
-       :style="imgContainerStyle"
-       :class="{ flutter: dragging }"></div>
+  <div>
+    <transition
+      :enter-active-class="enterActiveClass"
+      :leave-active-class="leaveActiveClass">
+      <div id="imgContainer"
+           ref="imgContainer"
+           draggable="false"
+           v-if="active"
+           @mousedown="startDrag"
+           @mousemove="onDragging"
+           @mouseup="endDrag"
+           @mousewheel="zoomInOut"
+           :style="imgContainerStyle"
+           :class="{ flutter: dragging }"></div>
+    </transition>
+  </div>
 </template>
 
 <script>
@@ -48,9 +55,11 @@ export default {
         h: 2037
       },
       imgContainerStyle: {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%,-50%)',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        margin: 'auto',
         width: '0px',
         height: '0px',
         backgroundSize: 'cover'
@@ -59,12 +68,14 @@ export default {
         zIndex: 9999,
         pointerEvents: 'none'
       },
+      enterAnimation: ['animate__animated', 'animate__heartBeat'],
       initialPos: {
         offsetLeft: 0,
         offsetTop: 0,
         pageX: 0,
         pageY: 0
       },
+      // 是否正在拖动
       dragging: false,
       showPath: [{// 中心主题
         x: 1870,
@@ -111,7 +122,7 @@ export default {
         y: 140,
         w: 978,
         h: 586
-      }, {// 战略目标之原则策略
+      }, {// 战略目标之原则&策略
         x: 244,
         y: 718,
         w: 982,
@@ -128,7 +139,14 @@ export default {
         h: 390
       }],
       nextPath: -1,
-      showing: false
+      // 是否正在演示
+      showing: false,
+      // 要不要显示思维导图
+      active: false,
+      // 入场类名
+      enterActiveClass: 'animate__animated animate__backInDown',
+      // 离场类名
+      leaveActiveClass: ''
     };
   },
   computed: {
@@ -146,11 +164,16 @@ export default {
       this.initialPos.offsetTop = e.target.offsetTop;
       this.initialPos.pageX = e.pageX;
       this.initialPos.pageY = e.pageY;
+      console.debug('start drag', this.initialPos);
     },
     onDragging(e) {
       if (this.dragging) {
+        // 拖拽时改变位置
         let left = this.initialPos.offsetLeft + e.pageX - this.initialPos.pageX,
             top = this.initialPos.offsetTop + e.pageY - this.initialPos.pageY;
+        this.imgContainerStyle.right = undefined;
+        this.imgContainerStyle.bottom = undefined;
+        this.imgContainerStyle.margin = undefined;
         this.imgContainerStyle.left = `${left}px`;
         this.imgContainerStyle.top = `${top}px`;
       }
@@ -160,6 +183,7 @@ export default {
     },
     zoomInOut(e) {
       if (this.showing) {
+        // 演示时不要缩放，因为太复杂了
         return;
       }
       let width = parseInt(this.$refs.imgContainer.offsetWidth),
@@ -216,6 +240,7 @@ export default {
         this.nextPath--;
         return;
       }
+      this.showing = true;
       this.internalShow();
     },
     showPrevious() {
@@ -223,41 +248,87 @@ export default {
         this.nextPath++;
         return;
       }
+      this.showing = true;
       this.internalShow();
     },
     internalShow() {
+      const next = this.showPath[this.nextPath];
+      console.debug(`show ${this.nextPath}: ${JSON.stringify(next)}`);
+
+      const showProp = this.getShowProp(next.x, next.y, next.w, next.h);
+      console.debug(`show property: ${JSON.stringify(showProp)}`);
+
+      this.active = false;
+
+      switch (this.nextPath) {
+        case 0:
+          this.enterActiveClass = 'animate__animated animate__heartBeat';
+          break;
+        case 1:
+          this.enterActiveClass = 'animate__animated animate__rotateInDownLeft';
+          break;
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 9:
+        case 10:
+        case 11:
+          this.enterActiveClass = 'animate__animated animate__fadeInUp';
+          break;
+        case 7:
+          this.enterActiveClass = 'animate__animated animate__bounceInLeft';
+          break;
+        case 8:
+          this.enterActiveClass = 'animate__animated animate__rotateInDownRight';
+          break;
+        default:
+          break;
+      }
+      
       this.$nextTick(() => {
-        const next = this.showPath[this.nextPath];
-        console.debug(`show ${this.nextPath}: ${JSON.stringify(next)}`);
-
-        const showProp = this.getShowProp(next.x, next.y, next.w, next.h);
-        console.debug(`show property: ${JSON.stringify(showProp)}`);
-
         this.imgContainerStyle.width = `${showProp.w}px`;
         this.imgContainerStyle.height = `${showProp.h}px`;
         this.imgContainerStyle.backgroundPosition = `${showProp.x}px ${showProp.y}px`;
         this.imgContainerStyle.backgroundSize = this.getBackgroundSize(next.w);
-        this.imgContainerStyle.left = '50%';
-        this.imgContainerStyle.top = '50%';
-        this.imgContainerStyle.transform = 'translate(-50%, -50%)';
+        this.imgContainerStyle.left = 0;
+        this.imgContainerStyle.right = 0;
+        this.imgContainerStyle.top = 0;
+        this.imgContainerStyle.bottom = 0;
+        this.imgContainerStyle.margin = 'auto';
+        this.active = true;
+      });
+    },
+    startMindMapping() {// 思维导图入场
+      // 计算思维导图的尺寸
+      let h = Math.ceil(this.getMaxShowWidth * (this.imgSize.h / this.imgSize.w));
+      this.imgContainerStyle.width = `${this.getMaxShowWidth}px`;
+      this.imgContainerStyle.height = `${h}px`;
+      this.active = true;
+      console.debug(`mind mapping: width=${this.imgContainerStyle.width}, height=${h}`);
+
+      // 当思维导图渲染成功后，就可以在`$nextTick()`内获取以像素为单元的位置和尺寸了
+      this.$nextTick(() => {
+        let target = this.$refs.imgContainer,// 这样做有助于提升性能
+            left = target.offsetLeft - Math.floor(target.offsetWidth / 2),// 本来值是`50%`的，现在变成了像素值
+            top = Math.floor(target.offsetTop - target.offsetWidth * (this.imgSize.h / this.imgSize.w) / 2);
+        console.debug(`left=${left}, top=${top}`);
+        this.imgContainerStyle.left = `${left}px`;
+        this.imgContainerStyle.top = `${top}px`;
+      });
+    },
+    leaveMindMapping() {// 思维导图离场
+      // 注意，此处队离场类样式的代码，应当放在`$nextTick()`之前
+      this.leaveActiveClass = 'animate__animated animate__backOutDown animate__slower';
+      this.$nextTick(() => {
+        this.active = false;
       });
     }
   },
   mounted() {
-    let h = Math.ceil(this.getMaxShowWidth * (this.imgSize.h / this.imgSize.w));
-    this.imgContainerStyle.width = `${this.getMaxShowWidth}px`;
-    this.imgContainerStyle.height = `${h}px`;
-
-    this.$nextTick(() => {
-      let target = this.$refs.imgContainer;
-      let left = target.offsetLeft - Math.floor(target.offsetWidth / 2),
-          top = Math.floor(target.offsetTop - target.offsetWidth * (this.imgSize.h / this.imgSize.w) / 2);
-      console.debug(`left=${left}, top=${top}`);
-      this.imgContainerStyle.left = `${left}px`;
-      this.imgContainerStyle.top = `${top}px`;
-      this.imgContainerStyle.transform = undefined;
-    });
-
+    this.$bus.$on('startMindMapping', this.startMindMapping);
+    this.$bus.$on('leaveMindMapping', this.leaveMindMapping);
     this.$bus.$on('showNext', this.showNext);
     this.$bus.$on('showPrevious', this.showPrevious);
   }
