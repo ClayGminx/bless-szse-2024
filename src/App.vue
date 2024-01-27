@@ -1,5 +1,8 @@
 <template>
   <div id="app" ref="app">
+    <!-- 文字烟花 -->
+    <TextFireworks/>
+
     <!-- 思维导图 -->
     <MindMapping/>
 
@@ -101,11 +104,11 @@
 <script>
 import MusicPlayer from '@/components/MusicPlayer.vue';
 import MindMapping from '@/components/MindMapping.vue';
-import SpringFirework from '@/components/SpringFirework.vue';
+import TextFireworks from '@/components/TextFireworks.vue';
 
 export default {
   name: 'App',
-  components: {MusicPlayer, MindMapping, SpringFirework},
+  components: {MusicPlayer, MindMapping, TextFireworks},
   data() {
     return {
       nextAction: 0
@@ -114,7 +117,7 @@ export default {
   methods: {
     playMusic() {
       console.debug('play music');
-      this.$bus.$emit('playMusic');
+      // this.$bus.$emit('playMusic');
     },
     startMindMapping() {
       console.debug('start mind mapping');
@@ -124,8 +127,9 @@ export default {
       console.debug('leave mind mapping');
       this.$bus.$emit('leaveMindMapping');
     },
-    playFirework() {
-      console.debug('play firework');
+    playTextFireworks() {
+      console.debug('play text fireworks');
+      this.$bus.$emit('startTextFireworks');
     }
   },
   mounted() {
@@ -143,7 +147,7 @@ export default {
             that.leaveMindMapping();
             break;
           case 3:
-            that.playFirework();
+            that.playTextFireworks();
             break;
         }
         that.nextAction++;
