@@ -2,7 +2,9 @@
   <div ref="textFireWorksContainer" v-show="active">
     <canvas id="textFireWorksCanvas" ref="textFireWorksCanvas" :width="canvasWidth" :height="canvasHeight"></canvas>
     <div id="textFireWorksDiv" ref="textFireWorksDiv"></div>
-    <transition enter-active-class="animate__animated animate__zoomInDown animate__slower animate__delay-2s">
+    <transition
+      enter-active-class="animate__animated animate__zoomInDown animate__slower animate__delay-2s"
+      @after-enter="afterEnter">
       <img id="buildingImg"
            src="images/szse-building.jpg"
            style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: auto"
@@ -32,7 +34,7 @@ export default {
           height = window.innerHeight,
           lineGap = 15,
           fontSize = Math.ceil((width - 605) / 5),
-          yOffset = (height - (fontSize * 2 + 15)) / 2 - lineGap;
+          yOffset = (height - (fontSize * 2 + 15)) / 3 - lineGap;
     return {
       active: false,
       // 使画布遮瞒全屏
@@ -169,6 +171,10 @@ export default {
         particles.push(particle);
         stage.addChild(particle);
       }
+    },
+    afterEnter(el) {
+      console.debug('finish animation');
+      Velocity(el, {opacity: 0.5, borderRadius: '1em'}, {easing: 'easeInSine', duration: 5000});
     }
   },
   mounted() {
@@ -184,13 +190,11 @@ export default {
 
 #textFireWorksDiv {
   position: relative;
-  z-index: 9999;
+  z-index: 2;
 }
 
 #buildingImg {
   z-index: 1;
-  opacity: 0.5;
   box-shadow: 1em 1em 2em rgba(80, 80, 75, 0.685);
-  border-radius: 1em;
 }
 </style>

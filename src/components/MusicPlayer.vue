@@ -44,10 +44,6 @@ export default {
         url: '/songs/恭喜恭喜.mp3',
         title: '恭喜恭喜',
         artist: '卓依婷'
-      },{
-        url: '/songs/新年好.mp3',
-        title: '新年好',
-        artist: '卓依婷'
       }],
       current: 0,
       playing: false,
@@ -118,6 +114,7 @@ export default {
   position: fixed;
   left: 0;
   bottom: 1em;
+  z-index: 3;
 }
 
 #musicPlayer > .music-info {
