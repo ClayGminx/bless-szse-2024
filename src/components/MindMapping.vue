@@ -330,7 +330,7 @@ export default {
 #imgContainer {
   display: inline-block;
   position: absolute;
-  background-image: url(深交所宣传标语.v3.png);
+  background-image: url(images/深交所宣传标语.v3.png);
   background-repeat: no-repeat;
 }
 
