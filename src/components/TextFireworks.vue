@@ -2,6 +2,13 @@
   <div ref="textFireWorksContainer" v-show="active">
     <canvas id="textFireWorksCanvas" ref="textFireWorksCanvas" :width="canvasWidth" :height="canvasHeight"></canvas>
     <div id="textFireWorksDiv" ref="textFireWorksDiv"></div>
+    <transition enter-active-class="animate__animated animate__zoomInDown animate__slower animate__delay-2s">
+      <img id="buildingImg"
+           src="images/szse-building.jpg"
+           style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: auto"
+           v-if="showBuildingImg"
+           height="85%"/>
+    </transition>
   </div>
 </template>
 
@@ -37,7 +44,8 @@ export default {
       lineGap: lineGap,
       // 垂直偏移量，也就是顶端空出多少
       yOffset: yOffset,
-      textPixels: []
+      textPixels: [],
+      showBuildingImg: false
     }
   },
   methods: {
@@ -51,6 +59,8 @@ export default {
       this.initCanvas();
       this.initTextFireworks();
       requestAnimationFrame(this.fireWorksAnimate);
+
+      this.showBuildingImg = true;
     },
     initCanvas() {// 初始化HTML5画布
       const canvas = this.$refs.textFireWorksCanvas;
@@ -174,6 +184,13 @@ export default {
 
 #textFireWorksDiv {
   position: relative;
+  z-index: 9999;
+}
+
+#buildingImg {
   z-index: 1;
+  opacity: 0.5;
+  box-shadow: 1em 1em 2em rgba(80, 80, 75, 0.685);
+  border-radius: 1em;
 }
 </style>

@@ -117,7 +117,7 @@ export default {
   methods: {
     playMusic() {
       console.debug('play music');
-      // this.$bus.$emit('playMusic');
+      this.$bus.$emit('playMusic');
     },
     startMindMapping() {
       console.debug('start mind mapping');
