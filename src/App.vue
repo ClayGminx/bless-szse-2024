@@ -133,8 +133,10 @@ export default {
     }
   },
   mounted() {
+    // 监听键盘事件，以演示作品
     const that = this;
     window.addEventListener('keyup', event => {
+      // 按下`down`键时，执行以下操作
       if ('ArrowDown' === event.key) {
         switch (that.nextAction) {
           case 0:
@@ -152,8 +154,10 @@ export default {
         }
         that.nextAction++;
       } else if ('ArrowRight' === event.key) {
+        // 按下`right`键时，使思维导图向后演示
         this.$bus.$emit('showNext');
       } else if ('ArrowLeft' === event.key) {
+        // 按下`left`键时，使思维导图向前演示
         this.$bus.$emit('showPrevious');
       }
     });

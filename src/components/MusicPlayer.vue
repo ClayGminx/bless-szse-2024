@@ -53,17 +53,22 @@ export default {
   methods: {
     playCurrent() {
       if (this.audio != null) {
+        // 如果`audio`对象还在，就继续播放。这适合于那种暂停后继续播放的操作
         this.playing = true;
         this.audio.play();
       } else {
+        // 从播放列表中获取歌曲
         let songPath = this.playlist[this.current].url;
+        // 下载歌曲
         let audio = new Audio(songPath);
         audio.addEventListener('canplaythrough', e => {
+          // 回放可以继续，不应该中断， readState 为 3
           audio.play();
           this.audio = audio;
           this.playing = true;
         });
         audio.addEventListener('ended', e => {
+          // 播放结束，自动下一曲
           this.playNext();
         });
       }

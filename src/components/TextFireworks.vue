@@ -97,6 +97,7 @@ export default {
       for (let i = 0, l = this.textPixels.length; i < l; i++) {
         this.createEmojiFirework(textures, this.textPixels[i], i);
       }
+      // 清空像素，释放内存
       this.textPixels = [];
     },
     shuffle(array) {// 打乱位置

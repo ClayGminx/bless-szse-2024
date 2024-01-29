@@ -46,6 +46,7 @@
    background-position-y = 0 - 演示部分的纵坐标 * 演示缩放比
  */
 export default {
+  // 思维导图
   name: 'MindMapping',
   data() {
     return {
@@ -54,6 +55,7 @@ export default {
         w: 4195,
         h: 2037
       },
+      // 图片的样式
       imgContainerStyle: {
         top: 0,
         bottom: 0,
@@ -64,11 +66,11 @@ export default {
         height: '0px',
         backgroundSize: 'cover'
       },
+      // 拖动时的样式
       flutter: {
         zIndex: 9999,
         pointerEvents: 'none'
       },
-      enterAnimation: ['animate__animated', 'animate__heartBeat'],
       initialPos: {
         offsetLeft: 0,
         offsetTop: 0,
@@ -77,6 +79,7 @@ export default {
       },
       // 是否正在拖动
       dragging: false,
+      // 思维导图的演示路径
       showPath: [{// 中心主题
         x: 1870,
         y: 850,
@@ -138,8 +141,9 @@ export default {
         w: 794,
         h: 390
       }],
+      // 下一个演示节点
       nextPath: -1,
-      // 是否正在演示
+      // 是否正在演示，希望演示时图片不要被缩放
       showing: false,
       // 要不要显示思维导图
       active: false,
@@ -150,14 +154,17 @@ export default {
     };
   },
   computed: {
+    // 图片最大的宽度，希望不要被上浮文字遮挡
     getMaxShowWidth() {
       return window.innerWidth - 605;
     },
+    // 图片最大的高度，希望不要越出浏览器
     getMaxShowHeight() {
       return Math.floor(window.innerHeight * 0.7);
     }
   },
   methods: {
+    // 开始拖动
     startDrag(e) {
       this.dragging = true;
       this.initialPos.offsetLeft = e.target.offsetLeft;
@@ -166,6 +173,7 @@ export default {
       this.initialPos.pageY = e.pageY;
       console.debug('start drag', this.initialPos);
     },
+    // 正在拖动
     onDragging(e) {
       if (this.dragging) {
         // 拖拽时改变位置
@@ -178,6 +186,7 @@ export default {
         this.imgContainerStyle.top = `${top}px`;
       }
     },
+    // 结束拖动
     endDrag() {
       this.dragging = false;
     },
@@ -208,6 +217,7 @@ export default {
       let height = Math.ceil(width * scale);
       this.imgContainerStyle.height = `${height}px`;
     },
+    // 显示属性
     getShowProp(x, y, w, h) {
         let displayWidth, displayHeight, displayX, displayY, scale;
         if (w > this.getMaxShowWidth) {
@@ -231,11 +241,14 @@ export default {
             h: displayHeight
         };
     },
+    // 图片放大到多少
     getBackgroundSize(w) {
         let scale = Math.floor(this.imgSize.w / w * 100);
         return `${scale}%`;
     },
+    // 演示下一个节点
     showNext() {
+      // 如果演示到最后一个节点，就不再往后演示
       if (++this.nextPath === this.showPath.length) {
         this.nextPath--;
         return;
@@ -243,7 +256,9 @@ export default {
       this.showing = true;
       this.internalShow();
     },
+    // 演示上一个节点
     showPrevious() {
+      // 如果后退到第一个节点，就不再后退
       if (--this.nextPath < 0) {
         this.nextPath++;
         return;
@@ -251,6 +266,7 @@ export default {
       this.showing = true;
       this.internalShow();
     },
+    // 演示节点
     internalShow() {
       const next = this.showPath[this.nextPath];
       console.debug(`show ${this.nextPath}: ${JSON.stringify(next)}`);
@@ -258,8 +274,10 @@ export default {
       const showProp = this.getShowProp(next.x, next.y, next.w, next.h);
       console.debug(`show property: ${JSON.stringify(showProp)}`);
 
+      // 暂使图片隐藏，后面就可以动画显示了
       this.active = false;
 
+      // 为每个节点定制进场动画
       switch (this.nextPath) {
         case 0:
           this.enterActiveClass = 'animate__animated animate__heartBeat';
@@ -287,6 +305,7 @@ export default {
           break;
       }
       
+      // 使节点进场
       this.$nextTick(() => {
         this.imgContainerStyle.width = `${showProp.w}px`;
         this.imgContainerStyle.height = `${showProp.h}px`;
@@ -300,15 +319,17 @@ export default {
         this.active = true;
       });
     },
-    startMindMapping() {// 思维导图入场
-      // 计算思维导图的尺寸
+    // 思维导图入场
+    startMindMapping() {
+      // 计算思维导图的尺寸，应保持图片的宽高比，否则会变形
       let h = Math.ceil(this.getMaxShowWidth * (this.imgSize.h / this.imgSize.w));
       this.imgContainerStyle.width = `${this.getMaxShowWidth}px`;
       this.imgContainerStyle.height = `${h}px`;
       this.active = true;
       console.debug(`mind mapping: width=${this.imgContainerStyle.width}, height=${h}`);
     },
-    leaveMindMapping() {// 思维导图离场
+    // 思维导图离场
+    leaveMindMapping() {
       // 注意，此处队离场类样式的代码，应当放在`$nextTick()`之前
       this.leaveActiveClass = 'animate__animated animate__backOutDown animate__slower';
       this.$nextTick(() => {
